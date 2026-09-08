@@ -1,0 +1,177 @@
+/*
+  Design concept: a study notebook, not a SaaS dashboard.
+  - A fixed vertical "margin rule" (like a red margin line on ruled paper) anchors every page.
+  - Faint horizontal rule lines run behind content, evoking ruled notebook paper.
+  - Lora (serif) carries goal titles and questions — the things worth slowing down for.
+  - Inter (sans) carries UI chrome and metadata — fast, functional, gets out of the way.
+*/
+
+:root {
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --ink: #1c2333;
+  --muted: #5b6478;
+  --rule: #d4dbe8;
+  --margin-line: #b5524a;
+  --accent: #2b3a67;
+  --accent-hover: #1f2c50;
+  --warm: #d98a2b;
+  --warm-soft: #f6e6cf;
+  --radius: 3px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1, h2, h3, .serif {
+  font-family: "Lora", Georgia, serif;
+  font-weight: 600;
+  margin: 0;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* The margin rule — a single deliberate accent, not repeated as decoration elsewhere. */
+.margin-rule {
+  width: 3px;
+  background: var(--margin-line);
+  opacity: 0.55;
+}
+
+.content {
+  flex: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 32px 96px;
+}
+
+.ruled {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 43px,
+    var(--rule) 43px,
+    var(--rule) 44px
+  );
+}
+
+a {
+  color: var(--accent);
+}
+
+button {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
+  transition: background 120ms ease;
+}
+
+button:hover {
+  background: var(--accent-hover);
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--rule);
+}
+
+button.secondary:hover {
+  background: var(--surface);
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: 15px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+  margin-top: 18px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--warm-soft);
+  color: var(--warm);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 40px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.nav .brand {
+  font-family: "Lora", serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.nav .links a {
+  margin-left: 20px;
+  font-size: 14px;
+  text-decoration: none;
+  color: var(--muted);
+}
+
+.nav .links a:hover {
+  color: var(--ink);
+}
