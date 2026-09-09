@@ -7,9 +7,9 @@ const { Pool } = pg;
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // Local Postgres doesn't use SSL by default. If you later point this at a hosted
-  // Postgres (Render, Neon, etc.) for deployment, you'll likely need to add:
-  // ssl: { rejectUnauthorized: false }
+  ssl: process.env.DATABASE_URL?.includes("sslmode=require")
+    ? { rejectUnauthorized: false }
+    : false,
 });
 
 // Small helper so route files don't each import pg directly.
