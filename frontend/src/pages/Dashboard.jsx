@@ -17,6 +17,8 @@ export default function Dashboard({ session, onLogout }) {
 
   async function handleDelete(goalId) {
     await authFetch(`/api/goals/${goalId}`, { method: "DELETE" });
+    // Update local state directly rather than re-fetching — avoids an extra
+    // network round-trip for something we already know the result of.
     setGoals((prev) => prev.filter((g) => g.id !== goalId));
   }
 
@@ -25,6 +27,17 @@ export default function Dashboard({ session, onLogout }) {
       <div className="margin-rule" />
       <div className="content">
         <Nav onLogout={onLogout} />
+
+        {session.user.isGuest && (
+          <div
+            className="card"
+            style={{ background: "var(--warm-soft)", border: "none", marginBottom: 24 }}
+          >
+            <p style={{ fontSize: 14, color: "var(--warm)", margin: 0 }}>
+              You're in a guest session — everything here is automatically cleared after 24 hours.
+            </p>
+          </div>
+        )}
 
         <h1 className="serif" style={{ fontSize: 26, marginBottom: 24 }}>
           Your goals

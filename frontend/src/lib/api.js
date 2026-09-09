@@ -48,6 +48,11 @@ export async function login(email, password) {
   return handle(res);
 }
 
+export async function continueAsGuest() {
+  const res = await fetch(`${API_URL}/api/auth/guest`, { method: "POST" });
+  return handle(res);
+}
+
 /** Fetch wrapper that attaches the current session's Bearer token automatically. */
 export async function authFetch(path, options = {}) {
   const session = getSession();

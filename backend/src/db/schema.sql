@@ -65,4 +65,4 @@ create table streaks (
   last_completed_date date
 );
 
- 
+ ALTER TABLE users ADD COLUMN is_guest boolean NOT NULL DEFAULT false;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login, signup, saveSession } from "../lib/api";
+import { login, signup, continueAsGuest, saveSession } from "../lib/api";
 
 export default function Login({ onLoggedIn }) {
   const [email, setEmail] = useState("");
@@ -7,6 +7,7 @@ export default function Login({ onLoggedIn }) {
   const [mode, setMode] = useState("login"); // 'login' | 'signup'
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -21,6 +22,20 @@ export default function Login({ onLoggedIn }) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleGuest() {
+    setError(null);
+    setGuestLoading(true);
+    try {
+      const data = await continueAsGuest();
+      saveSession(data);
+      onLoggedIn(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setGuestLoading(false);
     }
   }
 
@@ -66,8 +81,8 @@ export default function Login({ onLoggedIn }) {
 
         <p style={{ marginTop: 20, fontSize: 14, color: "var(--muted)" }}>
           {mode === "login" ? "New here?" : "Already have an account?"}{" "}
-          <a
-            href="#"
+          
+           <a href="#"
             onClick={(e) => {
               e.preventDefault();
               setMode(mode === "login" ? "signup" : "login");
@@ -77,6 +92,20 @@ export default function Login({ onLoggedIn }) {
             {mode === "login" ? "Create an account" : "Log in instead"}
           </a>
         </p>
+
+        <div style={{ borderTop: "1px solid var(--rule)", marginTop: 24, paddingTop: 20 }}>
+          <button
+            className="secondary"
+            onClick={handleGuest}
+            disabled={guestLoading}
+            style={{ width: "100%" }}
+          >
+            {guestLoading ? "Starting guest session…" : "Continue as Guest"}
+          </button>
+          <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 8, textAlign: "center" }}>
+            Try it out with no account — your data is automatically cleared after 24 hours.
+          </p>
+        </div>
       </div>
     </div>
   );
