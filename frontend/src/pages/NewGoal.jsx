@@ -94,7 +94,7 @@ export default function NewGoal({ session, onLogout }) {
             required
           />
 
-          <label htmlFor="file">Upload your notes (PDF or image)</label>
+          <label htmlFor="file">Upload your notes (PDF, up to 5 pages, or an image)</label>
           <input
             id="file"
             type="file"

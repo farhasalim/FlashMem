@@ -39,3 +39,16 @@ goalsRouter.get("/:id", async (req, res) => {
   if (result.rows.length === 0) return res.status(404).json({ error: "Goal not found" });
   res.json(result.rows[0]);
 });
+
+goalsRouter.delete("/:id", async (req, res) => {
+  // "returning id" doubles as our ownership check: if this goal doesn't belong to
+  // the requesting user, the WHERE clause matches zero rows and nothing is deleted.
+  // The database's "on delete cascade" (set up in schema.sql) automatically removes
+  // this goal's documents, questions, and quiz_attempts too — no extra queries needed.
+  const result = await query(
+    `delete from goals where id = $1 and user_id = $2 returning id`,
+    [req.params.id, req.userId]
+  );
+  if (result.rows.length === 0) return res.status(404).json({ error: "Goal not found" });
+  res.status(204).send();
+});

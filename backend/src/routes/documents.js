@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import { query } from "../db.js";
 import { extractText } from "../services/parseDocument.js";
-import { generateQuestions } from "../services/claudeService.js";
+import { generateQuestions } from "../services/aiService.js";
 import { requireAuth } from "../middleware/auth.js";
 
 export const documentsRouter = Router();

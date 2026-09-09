@@ -19,6 +19,12 @@ export function clearSession() {
 }
 
 async function handle(res) {
+  // A 204 No Content response (used by our DELETE route) has no body at all —
+  // calling res.json() on it would throw, since there's nothing to parse.
+  if (res.status === 204) {
+    if (!res.ok) throw new Error("Request failed");
+    return null;
+  }
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || "Request failed");
   return data;

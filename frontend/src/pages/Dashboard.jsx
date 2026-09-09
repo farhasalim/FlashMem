@@ -15,6 +15,11 @@ export default function Dashboard({ session, onLogout }) {
     });
   }, [session]);
 
+  async function handleDelete(goalId) {
+    await authFetch(`/api/goals/${goalId}`, { method: "DELETE" });
+    setGoals((prev) => prev.filter((g) => g.id !== goalId));
+  }
+
   return (
     <div className="page">
       <div className="margin-rule" />
@@ -40,7 +45,7 @@ export default function Dashboard({ session, onLogout }) {
         )}
 
         {goals.map((goal) => (
-          <GoalCard key={goal.id} goal={goal} />
+          <GoalCard key={goal.id} goal={goal} onDelete={handleDelete} />
         ))}
       </div>
     </div>

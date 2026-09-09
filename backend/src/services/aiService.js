@@ -1,9 +1,11 @@
-import Anthropic from "@anthropic-ai/sdk";
 import dotenv from "dotenv";
-
 dotenv.config();
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+// Using Gemini's REST API directly with fetch rather than an SDK — this avoids
+// depending on a specific SDK version's method names, which have changed more
+// than once as Google's Gemini libraries have evolved. A plain HTTP call is more
+// stable for a learning project like this one.
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
 
 /**
  * Generates flashcard-style Q&A pairs from raw document text, targeted at a stated goal.
@@ -29,24 +31,29 @@ Study material:
 ${text.slice(0, 12000)}
 """`; // TODO Week 2: chunk longer documents instead of truncating
 
-  const response = await anthropic.messages.create({
-    model: "claude-haiku-4-5",
-    max_tokens: 2000,
-    messages: [{ role: "user", content: prompt }],
+  const response = await fetch(`${GEMINI_URL}?key=${process.env.GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+    }),
   });
 
-  const raw = response.content
-    .filter((block) => block.type === "text")
-    .map((block) => block.text)
-    .join("");
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Gemini API error (${response.status}): ${errorBody}`);
+  }
+
+  const data = await response.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
   try {
     return JSON.parse(raw.trim());
   } catch (err) {
-    // Claude occasionally wraps JSON in prose despite instructions — fall back to
-    // extracting the first [...] block before giving up. TODO Week 2: make this more robust.
+    // Gemini occasionally wraps JSON in prose or markdown fences despite instructions —
+    // fall back to extracting the first [...] block before giving up.
     const match = raw.match(/\[[\s\S]*\]/);
     if (match) return JSON.parse(match[0]);
-    throw new Error("Could not parse Claude's response as JSON: " + raw.slice(0, 200));
+    throw new Error("Could not parse Gemini's response as JSON: " + raw.slice(0, 200));
   }
 }
